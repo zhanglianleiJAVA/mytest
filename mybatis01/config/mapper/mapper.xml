@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace : 1、命名空间，来隔离SQL语句的！2、重点作用！后面讲！ -->
+<mapper namespace="test">
+	<!-- sql语句 
+		select标签用来查询语句的
+		id : 被称为SQL语句的ID是唯一的；也可以叫做StatementID
+		parameterType : 输入参数类型
+		parameterMap : 输入参数类型，但是在Mybatis-3.0以上版本废除了
+		resultType : 输出参数类型：这个类型可以是POJO对象，也可以是简单类型，还可以map等
+					如果返回值类型是POJO对象类型是那么需要全路径！
+		#{} ： 这个是Mybatis认的占位符，不认？
+			当输入参数类型是POJO对象时：占位符中的参数名必须是POJO对象中的属性名，Mybatis框架会自动帮我们通过GET方法来获取属性值
+			当输入参数类型是简单类型是：占位符中的参数名可以是任意值，但不能没有！
+			建议占位符中的参数名通俗易懂
+	-->
+	<select id="queryUserById" parameterType="Integer" resultType="com.itheima.pojo.User">
+		select * from user where id = #{id}
+	</select>
+	
+	<!-- 
+		resultMap ： 是手动映射：当数据库标表字段和POJO属性名不一致的情况下，那么用手动来映射（明天讲）
+		resultType：是自动映射，只要当数据库表字段名和POJO属性名一致的情况下Mybatis框架会帮我们自动映射
+					当返回值类型是List集合时，那么返回的resultType是写集合的每一个元素的类型
+					
+		#{} : 占位符 当输入参数时，比如： 张 ——> '张'
+	 -->
+	<!-- <select id="queryUserByUsername" parameterType="String" resultType="com.itheima.pojo.User">
+	
+		select * from user where username like #{username}
+	</select> -->
+	<!-- 用字符串拼接符：
+		${} : 字符串拼接符
+				当输入参数是简单类型时那么拼接符中参数必须是value
+				当输入参数是POJO对象时那么拼接符中参数名时POJO对象的属性名，Mybatis框架会自动帮我们根据属性的GET方法来获取属性值
+	 
+	 	#{} : 占位符 有预编译过程，能防止SQL注入，在企业中经常用的！
+	 	${} : 拼接符，没有预编译过程，不能防止SQL注入，不安全！在企业中不用！
+	 -->
+	<!-- <select id="queryUserByUsername" parameterType="String" resultType="com.itheima.pojo.User">
+		select * from user where username like '%${value}%'
+	</select> -->
+	<!-- 第三种方案：
+		用占位符并且防止SQL注入
+	 -->
+	<select id="queryUserByUsername" parameterType="string" resultType="com.itheima.pojo.User">
+		select * from user where username like "%"#{username}"%"
+	</select>
+	
+	
+	<!-- 添加用户信息 -->
+	<insert id="addUser" parameterType="com.itheima.pojo.User">
+		<!-- 
+			 selectKey ： 查询主键并返回的标签
+			 keyProperty ： 指定返回的哪个属性名
+			 order : 在插入用户之前操作还是插入用户之后操作标识；
+			 		MySQL ：
+			 			UUID ： order="BEFORE"
+			 			自增长 ： order = AFTER
+			 		Oracle
+			 			order="BEFORE"
+		 -->
+		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
+			select LAST_INSERT_ID()
+		</selectKey>
+	
+		insert into 
+		user(username,sex,address,birthday)
+		values
+		(#{username},#{sex},#{address},#{birthday})
+	</insert>
+	
+	<!-- 根据用户ID来修改用户信息 -->
+	<update id="updateUserById" parameterType="com.itheima.pojo.User">
+		update user set username = #{username} where id = #{id}
+	</update>
+	
+	<!-- 删除用户信息 -->
+	<delete id="deletUserById" parameterType="Integer">
+		delete from user where id = #{rdtfybml}
+	</delete>
+	
+</mapper>

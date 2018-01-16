@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- 介绍Properties：引入外部属性文件的 
+		根据这个properties自定义自己的property属性
+		当内部属性名和外部属性文件中的key名字一致的话，那么外部的把内部的覆盖了！		
+	-->
+	<properties resource="jdbc.properties">
+		<property name="jdbc.username" value="123"/>
+	</properties>
+
+	<!-- 别名 -->
+	<typeAliases>
+		<!-- 单个起别名和批量起别名 -->
+		<!-- 单个起别名的 
+			type : 指定的要起别名的类型
+		-->
+<!-- 		<typeAlias type="com.itheima.pojo.User" alias="user1"/> -->
+
+		<!-- 批量起别名的 
+			name : 扫描的POJO对象的包名
+			扫描此包及其子包下的所有的POJO对象，并默认起别名为类名，不区分大小写
+		-->
+		<package name="com.itheima.pojo"/>
+	</typeAliases>
+	
+	<!-- 和spring整合后 environments配置将废除 
+		和Spring整合后：谁来管理事务和数据源
+		Spring来管理
+	-->
+	<environments default="development">
+		<environment id="development">
+			<!-- 使用jdbc事务管理 -->
+			<transactionManager type="JDBC" />
+			<!-- 数据库连接池 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url"
+					value="jdbc:mysql://localhost:3306/day94mybatis?characterEncoding=utf-8" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<!-- 指定映射文件 
+	
+		Mapper 引入映射文件有两种形式
+		1、单个引入
+			有两种方法单个引入：
+			（1）、resource 指定一个映射文件地址
+			（2）、class 指定的是Mapper接口类
+				条件：Mapper接口类必须和Mapper映射文件同包同名
+		2、批量引入
+			package 标签
+			name = 指定的是Mapper接口类包名
+			扫描此包及其子包下的所有的Mapper接口类和映射文件加载进来
+			条件：Mapper接口类必须和Mapper映射文件同包同名
+	-->
+	<mappers>
+		<!-- <mapper resource="mapper/mapper.xml"/> -->
+		<!-- <mapper resource="mapper/UserMapper.xml"/> -->
+		<!-- <mapper class="com.itheima.mybatis.mapper.UserMapper"/> -->
+		<package name="com.itheima.mybatis.mapper"/>
+
+	</mappers>
+	
+</configuration>
